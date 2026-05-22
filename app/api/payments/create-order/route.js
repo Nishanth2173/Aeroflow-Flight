@@ -52,7 +52,7 @@ export async function POST(request) {
     });
 
   } catch (err) {
-    console.error('paymentss route error:', err);
+    console.error('paymentsss route error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

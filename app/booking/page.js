@@ -176,7 +176,7 @@ function BookingPageInner() {
     if (user && pendingAction === 'pay') {
       setPendingAction(null);
       setShowLoginModal(false);
-      triggerPayment();
+      triggerpayments();
     }
   }, [user, pendingAction]);
 
@@ -227,10 +227,10 @@ function BookingPageInner() {
       setShowLoginModal(true);
       return;
     }
-    triggerPayment();
+    triggerpayments();
   };
 
-  const triggerPayment = useCallback(async () => {
+  const triggerpayments = useCallback(async () => {
     const supabase = createClient();
     const { data: { user: freshUser } } = await supabase.auth.getUser();
     if (!freshUser) {
@@ -243,13 +243,13 @@ function BookingPageInner() {
     try {
       const pnr = nanoid(6).toUpperCase();
 
-      const orderRes = await fetch('/api/payment/create-order', {
+      const orderRes = await fetch('/api/payments/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice, currency: 'INR', receipt: pnr }),
       });
 
-      if (!orderRes.ok) throw new Error('Payment API error: ' + await orderRes.text());
+      if (!orderRes.ok) throw new Error('payments API error: ' + await orderRes.text());
       const orderData = await orderRes.json();
 
       const bookSeats = async () => {
@@ -303,7 +303,7 @@ function BookingPageInner() {
           order_id: orderData.orderId,
           prefill: { name: passengerForm.fullName, email: freshUser.email || '' },
           theme: { color: '#38a3d4' },
-          modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
+          modal: { ondismiss: () => reject(new Error('payments cancelled')) },
           handler: async () => {
             try {
               const results = await bookSeats();
@@ -320,10 +320,10 @@ function BookingPageInner() {
       });
 
     } catch (err) {
-      if (err.message !== 'Payment cancelled') {
+      if (err.message !== 'payments cancelled') {
         toast.error(err.message || 'Booking failed. Please try again.');
       } else {
-        toast('Payment cancelled', { icon: '⚠️' });
+        toast('payments cancelled', { icon: '⚠️' });
       }
     } finally {
       setLoading(false);
@@ -527,7 +527,7 @@ function BookingPageInner() {
 
                     {!authLoading && !user && (
                       <div className="p-3 rounded-xl text-xs" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', color: 'var(--accent-gold)' }}>
-                        ⚡ You&apos;ll be asked to sign in before payment — it only takes a second.
+                        ⚡ You&apos;ll be asked to sign in before payments — it only takes a second.
                       </div>
                     )}
                   </div>
@@ -581,7 +581,7 @@ function BookingPageInner() {
               </div>
 
               <div className="glass-card p-5">
-                <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>PAYMENT</h3>
+                <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>payments</h3>
                 <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Secured by Razorpay</p>
                 <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>UPI · Cards · Net Banking · Wallets</p>
               </div>
