@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, ArrowRight, CreditCard, Mail, Lock, Eye, EyeOff, X, Plane } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -165,7 +168,7 @@ function loadRazorpay() {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function BookingPage() {
+function BookingPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const flightId = params.get('flightId');
@@ -189,7 +192,7 @@ export default function BookingPage() {
     if (user && pendingAction === 'pay') {
       setPendingAction(null);
       setShowLoginModal(false);
-      triggerpayments();
+      triggerPayment();
     }
   }, [user, pendingAction]);
 
@@ -221,15 +224,15 @@ export default function BookingPage() {
       return toast.error('Please fill in all passenger details');
     }
     if (!user) {
-      // Not logged in — show modal, remember to trigger payments after login
+      // Not logged in — show modal, remember to trigger payment after login
       setPendingAction('pay');
       setShowLoginModal(true);
       return;
     }
-    triggerpayments();
+    triggerPayment();
   };
 
-  const triggerpayments = useCallback(async () => {
+  const triggerPayment = useCallback(async () => {
     const supabase = createClient();
     const { data: { user: freshUser } } = await supabase.auth.getUser();
     if (!freshUser) {
@@ -243,7 +246,7 @@ export default function BookingPage() {
       const pnr = nanoid(6).toUpperCase();
 
       // Create order via our API route
-      const orderRes = await fetch('/api/payments/create-order', {
+      const orderRes = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice, currency: 'INR', receipt: pnr }),
@@ -251,7 +254,7 @@ export default function BookingPage() {
 
       if (!orderRes.ok) {
         const errText = await orderRes.text();
-        throw new Error('payments API error: ' + errText);
+        throw new Error('Payment API error: ' + errText);
       }
 
       const orderData = await orderRes.json();
@@ -271,7 +274,7 @@ export default function BookingPage() {
         });
         if (error || !data?.success) throw new Error(data?.error || error?.message || 'Booking failed');
         resetBookingFlow();
-        toast.success('Booking confirmed! (Test mode — no real payments)');
+        toast.success('Booking confirmed! (Test mode — no real payment)');
         router.push(`/confirmation?bookingId=${data.booking_id}&pnr=${pnr}&date=${searchedDate || ''}`);
         return;
       }
@@ -290,7 +293,7 @@ export default function BookingPage() {
           order_id: orderData.orderId,
           prefill: { name: passengerForm.fullName, email: freshUser.email || '' },
           theme: { color: '#38a3d4' },
-          modal: { ondismiss: () => reject(new Error('payments cancelled')) },
+          modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
           handler: async (response) => {
             try {
               const { data, error } = await supabase.rpc('reserve_seat', {
@@ -305,7 +308,7 @@ export default function BookingPage() {
                 p_dob: passengerForm.dob,
               });
               if (error || !data?.success) {
-                reject(new Error(data?.error || error?.message || 'Booking failed after payments'));
+                reject(new Error(data?.error || error?.message || 'Booking failed after payment'));
                 return;
               }
               resetBookingFlow();
@@ -321,10 +324,10 @@ export default function BookingPage() {
       });
 
     } catch (err) {
-      if (err.message !== 'payments cancelled') {
+      if (err.message !== 'Payment cancelled') {
         toast.error(err.message || 'Booking failed. Please try again.');
       } else {
-        toast('payments cancelled', { icon: '⚠️' });
+        toast('Payment cancelled', { icon: '⚠️' });
       }
     } finally {
       setLoading(false);
@@ -485,7 +488,7 @@ export default function BookingPage() {
                     {/* Show sign-in hint if not logged in */}
                     {!authLoading && !user && (
                       <div className="p-3 rounded-xl text-xs" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', color: 'var(--accent-gold)' }}>
-                        ⚡ You&apos;ll be asked to sign in before payments — it only takes a second.
+                        ⚡ You&apos;ll be asked to sign in before payment — it only takes a second.
                       </div>
                     )}
                   </div>
@@ -527,7 +530,7 @@ export default function BookingPage() {
               </div>
 
               <div className="glass-card p-5">
-                <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>payments</h3>
+                <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>PAYMENT</h3>
                 <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Secured by Razorpay</p>
                 <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>UPI · Cards · Net Banking · Wallets</p>
               </div>
@@ -536,5 +539,17 @@ export default function BookingPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <BookingPageInner />
+    </Suspense>
   );
 }

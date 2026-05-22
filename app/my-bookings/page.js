@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plane, RefreshCw, XCircle, ChevronDown, ChevronUp, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
@@ -219,8 +222,6 @@ function BookingCard({ booking, onCancel, onReschedule }) {
               <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Nationality:</span> <span>{passenger.nationality}</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Flight:</span> <span className="font-mono">{flight?.flight_no}</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Aircraft:</span> <span>{flight?.aircraft_type}</span></div>
-              {/* <div className="flex justify-between"><span style={{ color: 'var(--text-muted)' }}>Deapture-Date:</span> <span>{flight?.departs_at}</span></div> */}
-
             </div>
           )}
         </div>

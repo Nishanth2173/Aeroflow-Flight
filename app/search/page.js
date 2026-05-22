@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plane, ArrowLeftRight, Calendar, Users, Search as SearchIcon } from 'lucide-react';
 import useFlightStore from '@/store/flightStore';
@@ -13,7 +16,7 @@ const AIRPORTS = [
   { code: 'HYD', name: 'Hyderabad', full: 'Rajiv Gandhi International' },
 ];
 
-export default function SearchPage() {
+function SearchPageInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { searchQuery, setSearchQuery } = useFlightStore();
@@ -207,5 +210,17 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <SearchPageInner />
+    </Suspense>
   );
 }

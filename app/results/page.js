@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Plane, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -109,7 +112,7 @@ function FlightCard({ flight, onSelect, selectedClass }) {
   );
 }
 
-export default function ResultsPage() {
+function ResultsPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const { setSelectedFlight, setSearchQuery } = useFlightStore();
@@ -206,5 +209,17 @@ export default function ResultsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ResultsPageInner />
+    </Suspense>
   );
 }

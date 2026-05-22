@@ -1,3 +1,8 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
+
 import Link from 'next/link';
 import { Plane, Shield, Clock, Zap, ArrowRight, MapPin } from 'lucide-react';
 

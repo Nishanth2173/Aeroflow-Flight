@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Plane, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -12,7 +15,7 @@ function formatDuration(mins) {
   return `${Math.floor(mins / 60)}h ${mins % 60}m`;
 }
 
-export default function ReschedulePage() {
+function ReschedulePageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const { user } = useUserStore();
@@ -326,5 +329,17 @@ export default function ReschedulePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ReschedulePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ReschedulePageInner />
+    </Suspense>
   );
 }

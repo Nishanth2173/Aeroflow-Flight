@@ -1,13 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { Suspense } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Plane, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -15,7 +19,6 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Decode redirect param safely — it may contain encoded query strings
   const redirectParam = searchParams.get('redirect');
   const redirect = redirectParam ? decodeURIComponent(redirectParam) : '/search';
 
@@ -25,10 +28,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success('Welcome back!');
-      // Use replace so back button doesn't return to login
       router.replace(redirect);
     } catch (err) {
       toast.error(err.message || 'Login failed');
@@ -64,14 +66,9 @@ export default function LoginPage() {
               <div className="relative">
                 <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field"
-                  style={{ paddingLeft: '2.25rem' }}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  required
+                  type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="input-field" style={{ paddingLeft: '2.25rem' }}
+                  placeholder="you@example.com" autoComplete="email" required
                 />
               </div>
             </div>
@@ -83,21 +80,12 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
-                  type={showPass ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field"
-                  style={{ paddingLeft: '2.25rem', paddingRight: '2.5rem' }}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  required
+                  type={showPass ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="input-field" style={{ paddingLeft: '2.25rem', paddingRight: '2.5rem' }}
+                  placeholder="••••••••" autoComplete="current-password" required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--text-muted)' }}
-                >
+                <button type="button" onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -109,9 +97,7 @@ export default function LoginPage() {
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Signing in...
                 </span>
-              ) : (
-                <> Sign In <ArrowRight size={16} /> </>
-              )}
+              ) : <> Sign In <ArrowRight size={16} /> </>}
             </button>
           </form>
 
@@ -130,5 +116,17 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

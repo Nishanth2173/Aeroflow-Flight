@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -65,6 +68,7 @@ export default function RegisterPage() {
                 Email Address
               </label>
               <div className="relative">
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type="email"
                   value={email}
@@ -81,6 +85,7 @@ export default function RegisterPage() {
                 Password
               </label>
               <div className="relative">
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type={showPass ? 'text' : 'password'}
                   value={password}
@@ -105,6 +110,7 @@ export default function RegisterPage() {
                 Confirm Password
               </label>
               <div className="relative">
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type="password"
                   value={confirm}

@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, Plane, BookOpen } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -37,7 +40,7 @@ function buildRealTimes(flight, bookedAt) {
   return { departs: raw, arrives: rawArr };
 }
 
-export default function ConfirmationPage() {
+function ConfirmationPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const bookingId = params.get('bookingId');
@@ -236,5 +239,17 @@ export default function ConfirmationPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-jade-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ConfirmationPageInner />
+    </Suspense>
   );
 }
