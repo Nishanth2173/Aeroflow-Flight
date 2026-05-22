@@ -13,34 +13,47 @@ const useFlightStore = create(
       },
 
       selectedFlight: null,
-      selectedSeat: null,
+      selectedSeats: [],        // ← array now (was single seat)
       currentStep: 1,
 
-      // All fields initialized as '' — never undefined (fixes uncontrolled input warning)
       passengerForm: {
         fullName: '',
-        passportNo: '',
+        passportNo: '',         // excluded from localStorage via partialize
         nationality: '',
         dob: '',
       },
-
-      optimisticSeatId: null,
 
       setSearchQuery: (query) =>
         set((state) => ({ searchQuery: { ...state.searchQuery, ...query } })),
 
       setSelectedFlight: (flight) =>
-        set({ selectedFlight: flight, selectedSeat: null, currentStep: 3 }),
+        set({ selectedFlight: flight, selectedSeats: [], currentStep: 3 }),
 
-      setSelectedSeat: (seat) =>
-        set({ selectedSeat: seat, optimisticSeatId: seat?.id ?? null }),
+      // Toggle seat in/out of selectedSeats array
+      toggleSeat: (seat) =>
+        set((state) => {
+          const exists = state.selectedSeats.find(s => s.id === seat.id);
+          if (exists) {
+            // Deselect
+            return { selectedSeats: state.selectedSeats.filter(s => s.id !== seat.id) };
+          } else {
+            // Select — enforce max = passengerCount
+            const max = state.searchQuery.passengerCount || 1;
+            if (state.selectedSeats.length >= max) {
+              // Replace the last one if at max
+              return { selectedSeats: [...state.selectedSeats.slice(0, max - 1), seat] };
+            }
+            return { selectedSeats: [...state.selectedSeats, seat] };
+          }
+        }),
+
+      clearSeats: () => set({ selectedSeats: [] }),
 
       setCurrentStep: (step) => set({ currentStep: step }),
 
       setPassengerForm: (data) =>
         set((state) => ({
           passengerForm: {
-            // Ensure no field ever becomes undefined
             fullName: '',
             passportNo: '',
             nationality: '',
@@ -53,30 +66,27 @@ const useFlightStore = create(
       resetBookingFlow: () =>
         set({
           selectedFlight: null,
-          selectedSeat: null,
+          selectedSeats: [],
           currentStep: 1,
           passengerForm: { fullName: '', passportNo: '', nationality: '', dob: '' },
-          optimisticSeatId: null,
         }),
 
       resetAll: () =>
         set({
           searchQuery: { origin: '', destination: '', date: '', passengerCount: 1, class: 'economy' },
           selectedFlight: null,
-          selectedSeat: null,
+          selectedSeats: [],
           currentStep: 1,
           passengerForm: { fullName: '', passportNo: '', nationality: '', dob: '' },
-          optimisticSeatId: null,
         }),
     }),
     {
       name: 'flight-store',
       storage: createJSONStorage(() => localStorage),
-      // Exclude passport from localStorage — sensitive data
       partialize: (state) => ({
         searchQuery: state.searchQuery,
         selectedFlight: state.selectedFlight,
-        selectedSeat: state.selectedSeat,
+        selectedSeats: state.selectedSeats,
         currentStep: state.currentStep,
         passengerForm: {
           fullName: state.passengerForm.fullName || '',
@@ -85,17 +95,14 @@ const useFlightStore = create(
           // passportNo intentionally excluded
         },
       }),
-      // Merge persisted state safely — ensure no undefined values leak in
-      merge: (persistedState, currentState) => ({
-        ...currentState,
-        ...persistedState,
+      merge: (persisted, current) => ({
+        ...current,
+        ...persisted,
+        selectedSeats: persisted?.selectedSeats || [],
         passengerForm: {
-          fullName: '',
-          passportNo: '',
-          nationality: '',
-          dob: '',
-          ...currentState.passengerForm,
-          ...(persistedState?.passengerForm || {}),
+          fullName: '', passportNo: '', nationality: '', dob: '',
+          ...current.passengerForm,
+          ...(persisted?.passengerForm || {}),
         },
       }),
     }

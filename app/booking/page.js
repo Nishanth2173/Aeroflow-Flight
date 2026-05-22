@@ -2,10 +2,9 @@
 
 export const dynamic = 'force-dynamic';
 
-
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { CheckCircle, ArrowRight, CreditCard, Mail, Lock, Eye, EyeOff, X, Plane } from 'lucide-react';
+import { CheckCircle, ArrowRight, CreditCard, Mail, Lock, Eye, EyeOff, X, Plane, Trash2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import SeatMap from '@/components/seat-map/SeatMap';
 import useFlightStore from '@/store/flightStore';
@@ -20,7 +19,7 @@ function LoginModal({ onSuccess, onClose }) {
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [mode, setMode] = useState('login');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,12 +45,9 @@ function LoginModal({ onSuccess, onClose }) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(6,13,26,0.9)', backdropFilter: 'blur(8px)' }}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(6,13,26,0.9)', backdropFilter: 'blur(8px)' }}>
       <div className="glass-card w-full max-w-md p-8 animate-slide-up-fade" style={{ border: '1px solid rgba(56,163,212,0.3)' }}>
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -62,48 +58,33 @@ function LoginModal({ onSuccess, onClose }) {
               <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>
                 {mode === 'login' ? 'Sign in to continue' : 'Create account'}
               </h2>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                Required to complete booking
-              </p>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Required to complete booking</p>
             </div>
           </div>
-          <button onClick={onClose} style={{ color: 'var(--text-muted)' }} className="hover:text-white transition-colors">
-            <X size={20} />
-          </button>
+          <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
             <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-            <input
-              type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              className="input-field" style={{ paddingLeft: '2.25rem' }}
-              placeholder="your@email.com" required autoFocus
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              className="input-field" style={{ paddingLeft: '2.25rem' }} placeholder="your@email.com" required autoFocus />
           </div>
-
           <div className="relative">
             <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-            <input
-              type={showPass ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
-              className="input-field" style={{ paddingLeft: '2.25rem', paddingRight: '2.5rem' }}
-              placeholder="Password" required
-            />
-            <button type="button" onClick={() => setShowPass(!showPass)}
-              className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>
+            <input type={showPass ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
+              className="input-field" style={{ paddingLeft: '2.25rem', paddingRight: '2.5rem' }} placeholder="Password" required />
+            <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>
               {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
-
           <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
             {loading
               ? <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Please wait...</span>
-              : mode === 'login' ? 'Sign In & Continue' : 'Create Account & Continue'
-            }
+              : mode === 'login' ? 'Sign In & Continue' : 'Create Account & Continue'}
           </button>
         </form>
 
-        {/* Test credentials */}
         <div className="mt-4 p-3 rounded-xl text-xs" style={{ background: 'rgba(56,163,212,0.06)', border: '1px solid rgba(56,163,212,0.15)' }}>
           <span style={{ color: 'var(--accent-sky)', fontFamily: 'var(--font-mono)' }}>Test: </span>
           <span style={{ color: 'var(--text-secondary)' }}>test@aeroflow.dev / TestPass123!</span>
@@ -111,8 +92,7 @@ function LoginModal({ onSuccess, onClose }) {
 
         <p className="text-center mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-            style={{ color: 'var(--accent-sky)' }} className="font-medium hover:underline">
+          <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} style={{ color: 'var(--accent-sky)' }} className="font-medium hover:underline">
             {mode === 'login' ? 'Create one' : 'Sign in'}
           </button>
         </p>
@@ -123,7 +103,7 @@ function LoginModal({ onSuccess, onClose }) {
 
 // ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepIndicator({ step }) {
-  const steps = ['Select Seat', 'Passenger Info', 'Pay & Confirm'];
+  const steps = ['Select Seats', 'Passenger Info', 'Pay & Confirm'];
   return (
     <div className="flex items-center justify-center mb-8">
       {steps.map((label, i) => {
@@ -155,7 +135,6 @@ function StepIndicator({ step }) {
   );
 }
 
-// ─── Load Razorpay ────────────────────────────────────────────────────────────
 function loadRazorpay() {
   return new Promise((resolve) => {
     if (window.Razorpay) return resolve(true);
@@ -167,27 +146,32 @@ function loadRazorpay() {
   });
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main booking page inner ──────────────────────────────────────────────────
 function BookingPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const flightId = params.get('flightId');
   const searchedDate = params.get('date');
 
-  const { selectedFlight, selectedSeat, setSelectedSeat, passengerForm, setPassengerForm, resetBookingFlow } = useFlightStore();
+  const {
+    selectedFlight, selectedSeats, toggleSeat, clearSeats,
+    passengerForm, setPassengerForm, resetBookingFlow, searchQuery,
+  } = useFlightStore();
+
   const { user, loading: authLoading } = useAuth();
 
   const [step, setStep] = useState(1);
   const [flight, setFlight] = useState(selectedFlight);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null); // 'pay'
+  const [pendingAction, setPendingAction] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const maxSeats = searchQuery.passengerCount || 1;
 
   useEffect(() => {
     if (!flight && flightId) fetchFlight();
   }, [flightId]);
 
-  // After login — immediately continue the pending action
   useEffect(() => {
     if (user && pendingAction === 'pay') {
       setPendingAction(null);
@@ -213,18 +197,32 @@ function BookingPageInner() {
     }
   }
 
-  const totalPrice = flight && selectedSeat
-    ? flight.base_price + (selectedSeat.extra_fee || 0)
-    : flight?.base_price || 0;
+  // Total price = base price × seats + sum of seat extra fees
+  const seatsExtraFee = selectedSeats.reduce((sum, s) => sum + (s.extra_fee || 0), 0);
+  const totalPrice = flight
+    ? (flight.base_price * Math.max(selectedSeats.length, 1)) + seatsExtraFee
+    : 0;
 
-  // Called when user clicks "Pay" — checks auth first
+  const handleSeatToggle = (seat) => {
+    const isSelected = selectedSeats.find(s => s.id === seat.id);
+    if (!isSelected && selectedSeats.length >= maxSeats) {
+      toast.error(`You can only select ${maxSeats} seat${maxSeats > 1 ? 's' : ''} for ${maxSeats} passenger${maxSeats > 1 ? 's' : ''}`);
+      return;
+    }
+    toggleSeat(seat);
+    if (isSelected) {
+      toast(`Seat ${seat.seat_number} deselected`, { icon: '✕', duration: 1200 });
+    } else {
+      toast.success(`Seat ${seat.seat_number} selected!`, { duration: 1200 });
+    }
+  };
+
   const handlePayClick = () => {
-    if (!selectedSeat) return toast.error('Please select a seat');
+    if (selectedSeats.length === 0) return toast.error('Please select at least one seat');
     if (!passengerForm.fullName || !passengerForm.passportNo || !passengerForm.nationality || !passengerForm.dob) {
       return toast.error('Please fill in all passenger details');
     }
     if (!user) {
-      // Not logged in — show modal, remember to trigger payment after login
       setPendingAction('pay');
       setShowLoginModal(true);
       return;
@@ -245,37 +243,49 @@ function BookingPageInner() {
     try {
       const pnr = nanoid(6).toUpperCase();
 
-      // Create order via our API route
       const orderRes = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice, currency: 'INR', receipt: pnr }),
       });
 
-      if (!orderRes.ok) {
-        const errText = await orderRes.text();
-        throw new Error('Payment API error: ' + errText);
-      }
-
+      if (!orderRes.ok) throw new Error('Payment API error: ' + await orderRes.text());
       const orderData = await orderRes.json();
 
-      // If mock order (Razorpay keys not configured) — skip checkout, book directly
+      const bookSeats = async () => {
+        // Reserve each seat sequentially using RPC
+        const results = [];
+        for (let i = 0; i < selectedSeats.length; i++) {
+          const seat = selectedSeats[i];
+          const seatPnr = i === 0 ? pnr : nanoid(6).toUpperCase();
+          const seatPrice = flight.base_price + (seat.extra_fee || 0);
+
+          const { data, error } = await supabase.rpc('reserve_seat', {
+            p_flight_id: flight.id,
+            p_seat_id: seat.id,
+            p_user_id: freshUser.id,
+            p_total_price: seatPrice,
+            p_pnr_code: seatPnr,
+            p_passenger_name: passengerForm.fullName,
+            p_passport_no: passengerForm.passportNo,
+            p_nationality: passengerForm.nationality,
+            p_dob: passengerForm.dob,
+          });
+
+          if (error || !data?.success) {
+            throw new Error(`Seat ${seat.seat_number}: ${data?.error || error?.message || 'Booking failed'}`);
+          }
+          results.push({ bookingId: data.booking_id, pnr: seatPnr });
+        }
+        return results;
+      };
+
+      // Mock mode — no Razorpay keys configured
       if (orderData.mock) {
-        const { data, error } = await supabase.rpc('reserve_seat', {
-          p_flight_id: flight.id,
-          p_seat_id: selectedSeat.id,
-          p_user_id: freshUser.id,
-          p_total_price: totalPrice,
-          p_pnr_code: pnr,
-          p_passenger_name: passengerForm.fullName,
-          p_passport_no: passengerForm.passportNo,
-          p_nationality: passengerForm.nationality,
-          p_dob: passengerForm.dob,
-        });
-        if (error || !data?.success) throw new Error(data?.error || error?.message || 'Booking failed');
+        const results = await bookSeats();
         resetBookingFlow();
-        toast.success('Booking confirmed! (Test mode — no real payment)');
-        router.push(`/confirmation?bookingId=${data.booking_id}&pnr=${pnr}&date=${searchedDate || ''}`);
+        toast.success(`${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''} booked! (Test mode)`);
+        router.push(`/confirmation?bookingId=${results[0].bookingId}&pnr=${results[0].pnr}&date=${searchedDate || ''}&seats=${selectedSeats.length}`);
         return;
       }
 
@@ -289,38 +299,24 @@ function BookingPageInner() {
           amount: orderData.amount,
           currency: orderData.currency,
           name: 'AeroFlow',
-          description: `Flight ${flight.flight_no} · Seat ${selectedSeat.seat_number}`,
+          description: `${flight.flight_no} · ${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''} · ${selectedSeats.map(s => s.seat_number).join(', ')}`,
           order_id: orderData.orderId,
           prefill: { name: passengerForm.fullName, email: freshUser.email || '' },
           theme: { color: '#38a3d4' },
           modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
-          handler: async (response) => {
+          handler: async () => {
             try {
-              const { data, error } = await supabase.rpc('reserve_seat', {
-                p_flight_id: flight.id,
-                p_seat_id: selectedSeat.id,
-                p_user_id: freshUser.id,
-                p_total_price: totalPrice,
-                p_pnr_code: pnr,
-                p_passenger_name: passengerForm.fullName,
-                p_passport_no: passengerForm.passportNo,
-                p_nationality: passengerForm.nationality,
-                p_dob: passengerForm.dob,
-              });
-              if (error || !data?.success) {
-                reject(new Error(data?.error || error?.message || 'Booking failed after payment'));
-                return;
-              }
+              const results = await bookSeats();
               resetBookingFlow();
-              resolve({ bookingId: data.booking_id, pnr });
+              resolve(results);
             } catch (err) { reject(err); }
           },
         };
         const rzp = new window.Razorpay(options);
         rzp.open();
-      }).then(({ bookingId, pnr }) => {
-        toast.success('Booking confirmed!');
-        router.push(`/confirmation?bookingId=${bookingId}&pnr=${pnr}&date=${searchedDate || ''}`);
+      }).then((results) => {
+        toast.success(`${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''} booked!`);
+        router.push(`/confirmation?bookingId=${results[0].bookingId}&pnr=${results[0].pnr}&date=${searchedDate || ''}&seats=${selectedSeats.length}`);
       });
 
     } catch (err) {
@@ -332,7 +328,7 @@ function BookingPageInner() {
     } finally {
       setLoading(false);
     }
-  }, [flight, selectedSeat, passengerForm, totalPrice, resetBookingFlow, router]);
+  }, [flight, selectedSeats, passengerForm, totalPrice, resetBookingFlow, router, searchedDate]);
 
   if (!flight) {
     return (
@@ -351,24 +347,15 @@ function BookingPageInner() {
 
   return (
     <>
-      {/* Login modal — shown only when needed */}
       {showLoginModal && (
-        <LoginModal
-          onSuccess={() => {
-            // useEffect above handles continuing after login
-          }}
-          onClose={() => {
-            setShowLoginModal(false);
-            setPendingAction(null);
-          }}
-        />
+        <LoginModal onSuccess={() => {}} onClose={() => { setShowLoginModal(false); setPendingAction(null); }} />
       )}
 
       <div className="min-h-screen px-4 py-10">
         <div className="max-w-5xl mx-auto">
           <StepIndicator step={step} />
 
-          {/* Flight summary */}
+          {/* Flight summary bar */}
           <div className="glass-card p-4 mb-6 flex flex-wrap items-center gap-4 justify-between" style={{ border: '1px solid rgba(56,163,212,0.2)' }}>
             <div>
               <div className="font-bold text-xl" style={{ fontFamily: 'var(--font-mono)' }}>
@@ -379,37 +366,77 @@ function BookingPageInner() {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold" style={{ color: 'var(--accent-gold)', fontFamily: 'var(--font-mono)' }}>₹{totalPrice.toLocaleString()}</div>
-              {selectedSeat && <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Seat {selectedSeat.seat_number} · {selectedSeat.class}</div>}
+              <div className="text-xl font-bold" style={{ color: 'var(--accent-gold)', fontFamily: 'var(--font-mono)' }}>
+                ₹{totalPrice.toLocaleString()}
+              </div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                {selectedSeats.length > 0
+                  ? `${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''}: ${selectedSeats.map(s => s.seat_number).join(', ')}`
+                  : `Select up to ${maxSeats} seat${maxSeats > 1 ? 's' : ''}`}
+              </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
 
-              {/* Step 1 */}
+              {/* Step 1: Seat Selection */}
               {step === 1 && (
                 <div className="glass-card p-6 animate-slide-up-fade">
-                  <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)' }}>Select Your Seat</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>
+                      Select Your Seat{maxSeats > 1 ? 's' : ''}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                        {selectedSeats.length}/{maxSeats} selected
+                      </span>
+                      {selectedSeats.length > 0 && (
+                        <button
+                          onClick={clearSeats}
+                          className="text-xs flex items-center gap-1 px-2 py-1 rounded-lg"
+                          style={{ color: 'var(--accent-coral)', border: '1px solid rgba(232,83,58,0.3)' }}
+                        >
+                          <Trash2 size={11} /> Clear
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {maxSeats > 1 && (
+                    <div className="mb-4 p-3 rounded-xl text-xs" style={{ background: 'rgba(56,163,212,0.06)', border: '1px solid rgba(56,163,212,0.2)', color: 'var(--accent-sky)' }}>
+                      ℹ You searched for <strong>{maxSeats} passengers</strong> — select up to {maxSeats} seats. Click a selected seat to deselect it.
+                    </div>
+                  )}
+
                   <div className="overflow-x-auto">
                     <SeatMap
                       flightId={flight.id}
-                      selectedSeat={selectedSeat}
-                      onSeatSelect={(seat) => { setSelectedSeat(seat); toast.success(`Seat ${seat.seat_number} selected!`, { duration: 1500 }); }}
+                      selectedSeats={selectedSeats}
+                      onSeatSelect={handleSeatToggle}
                     />
                   </div>
                   <div className="mt-6 flex justify-end">
-                    <button disabled={!selectedSeat} onClick={() => setStep(2)} className="btn-primary">
+                    <button
+                      disabled={selectedSeats.length === 0}
+                      onClick={() => setStep(2)}
+                      className="btn-primary"
+                    >
                       Continue <ArrowRight size={16} />
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Step 2 */}
+              {/* Step 2: Passenger Details */}
               {step === 2 && (
                 <div className="glass-card p-6 animate-slide-up-fade">
-                  <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)' }}>Passenger Details</h2>
+                  <h2 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-display)' }}>Passenger Details</h2>
+                  {selectedSeats.length > 1 && (
+                    <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+                      Lead passenger details apply to all {selectedSeats.length} seats
+                    </p>
+                  )}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Full Name (as on passport)</label>
@@ -443,11 +470,12 @@ function BookingPageInner() {
                 </div>
               )}
 
-              {/* Step 3 */}
+              {/* Step 3: Review & Pay */}
               {step === 3 && (
                 <div className="glass-card p-6 animate-slide-up-fade">
                   <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)' }}>Review & Pay</h2>
                   <div className="space-y-4">
+                    {/* Flight info */}
                     <div className="p-4 rounded-xl" style={{ background: 'rgba(56,163,212,0.05)', border: '1px solid var(--border-color)' }}>
                       <h3 className="text-xs font-semibold mb-3 uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>FLIGHT</h3>
                       <div className="grid grid-cols-2 gap-3 text-sm">
@@ -455,11 +483,14 @@ function BookingPageInner() {
                         <div><span style={{ color: 'var(--text-muted)' }}>Route: </span><span className="font-bold">{flight.origin} → {flight.destination}</span></div>
                         <div><span style={{ color: 'var(--text-muted)' }}>Date: </span>{departs ? format(departs, 'dd MMM yyyy') : ''}</div>
                         <div><span style={{ color: 'var(--text-muted)' }}>Time: </span>{departs ? format(departs, 'HH:mm') : ''} – {arrives ? format(arrives, 'HH:mm') : ''}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>Seat: </span><span className="font-bold">{selectedSeat?.seat_number}</span> ({selectedSeat?.class})</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>Aircraft: </span>{flight.aircraft_type}</div>
+                        <div className="col-span-2">
+                          <span style={{ color: 'var(--text-muted)' }}>Seats: </span>
+                          <span className="font-bold">{selectedSeats.map(s => `${s.seat_number} (${s.class})`).join(' · ')}</span>
+                        </div>
                       </div>
                     </div>
 
+                    {/* Passenger */}
                     <div className="p-4 rounded-xl" style={{ background: 'rgba(56,163,212,0.05)', border: '1px solid var(--border-color)' }}>
                       <h3 className="text-xs font-semibold mb-3 uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>PASSENGER</h3>
                       <div className="grid grid-cols-2 gap-3 text-sm">
@@ -470,22 +501,30 @@ function BookingPageInner() {
                       </div>
                     </div>
 
+                    {/* Price breakdown */}
                     <div className="p-4 rounded-xl" style={{ background: 'rgba(245,166,35,0.05)', border: '1px solid rgba(245,166,35,0.2)' }}>
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold">Total Amount</span>
-                        <span className="text-2xl font-bold" style={{ color: 'var(--accent-gold)', fontFamily: 'var(--font-mono)' }}>₹{totalPrice.toLocaleString()}</span>
-                      </div>
-                      <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-                        Base ₹{flight.base_price?.toLocaleString()} + Seat fee ₹{(selectedSeat?.extra_fee || 0).toLocaleString()}
+                      <h3 className="text-xs font-semibold mb-3 uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>PRICE BREAKDOWN</h3>
+                      <div className="space-y-2 text-sm">
+                        {selectedSeats.map((seat) => (
+                          <div key={seat.id} className="flex justify-between">
+                            <span style={{ color: 'var(--text-secondary)' }}>
+                              Seat {seat.seat_number} ({seat.class})
+                            </span>
+                            <span className="font-mono">₹{(flight.base_price + (seat.extra_fee || 0)).toLocaleString()}</span>
+                          </div>
+                        ))}
+                        <div className="h-px mt-2" style={{ background: 'var(--border-color)' }} />
+                        <div className="flex justify-between font-bold pt-1">
+                          <span>Total ({selectedSeats.length} seat{selectedSeats.length > 1 ? 's' : ''})</span>
+                          <span className="font-mono text-lg" style={{ color: 'var(--accent-gold)' }}>₹{totalPrice.toLocaleString()}</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Test mode hint */}
                     <div className="p-3 rounded-xl text-xs" style={{ background: 'rgba(46,196,138,0.08)', border: '1px solid rgba(46,196,138,0.2)', color: 'var(--accent-jade)' }}>
-                      <strong>Razorpay Test Mode —</strong> Card: <span className="font-mono">4111 1111 1111 1111</span> · Expiry: any future · CVV: <span className="font-mono">123</span>
+                      <strong>Razorpay Test —</strong> Card: <span className="font-mono">4111 1111 1111 1111</span> · Any future expiry · CVV: <span className="font-mono">123</span>
                     </div>
 
-                    {/* Show sign-in hint if not logged in */}
                     {!authLoading && !user && (
                       <div className="p-3 rounded-xl text-xs" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', color: 'var(--accent-gold)' }}>
                         ⚡ You&apos;ll be asked to sign in before payment — it only takes a second.
@@ -509,24 +548,36 @@ function BookingPageInner() {
             {/* Sidebar */}
             <div className="space-y-4">
               <div className="glass-card p-5">
-                <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>BOOKING SUMMARY</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-secondary)' }}>Base fare</span>
-                    <span className="font-mono">₹{flight.base_price?.toLocaleString()}</span>
-                  </div>
-                  {selectedSeat?.extra_fee > 0 && (
-                    <div className="flex justify-between">
-                      <span style={{ color: 'var(--text-secondary)' }}>Seat ({selectedSeat.class})</span>
-                      <span className="font-mono">₹{selectedSeat.extra_fee.toLocaleString()}</span>
+                <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  SELECTED SEATS
+                </h3>
+                {selectedSeats.length === 0 ? (
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                    No seats selected yet
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedSeats.map((seat) => (
+                      <div key={seat.id} className="flex items-center justify-between text-sm p-2 rounded-lg"
+                        style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)' }}>
+                        <div>
+                          <span className="font-bold font-mono" style={{ color: 'var(--accent-gold)' }}>{seat.seat_number}</span>
+                          <span className="ml-2 text-xs capitalize" style={{ color: 'var(--text-muted)' }}>{seat.class}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs">₹{(flight.base_price + (seat.extra_fee || 0)).toLocaleString()}</span>
+                          <button onClick={() => toggleSeat(seat)} style={{ color: 'var(--accent-coral)' }}>
+                            <X size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex justify-between font-bold text-sm pt-2 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                      <span>Total</span>
+                      <span className="font-mono" style={{ color: 'var(--accent-gold)' }}>₹{totalPrice.toLocaleString()}</span>
                     </div>
-                  )}
-                  <div className="h-px" style={{ background: 'var(--border-color)' }} />
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span className="font-mono" style={{ color: 'var(--accent-gold)' }}>₹{totalPrice.toLocaleString()}</span>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="glass-card p-5">
