@@ -12,17 +12,10 @@
 
 A production-grade, fully responsive **Flight Management Web App** where passengers can search flights, select seats interactively, book with Razorpay paymentss, reschedule, and cancel — with real-time seat updates powered by Supabase Realtime.
 
-**🔗 Live Demo:** `https://your-app.vercel.app` ← _(replace with your Vercel URL)_
+**🔗 Live Demo:** https://aeroflow-flight.vercel.app
 
 </div>
 
----
-
-## 📸 Screenshots
-
-> _(Add screenshots of your app here after deployment)_
-
----
 
 ## ✅ Submission Checklist
 
