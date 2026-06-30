@@ -68,12 +68,13 @@ export default function RegisterPage() {
                 Email Address
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input-field pl-10"
+                  className="input-field"
+                  style={{ paddingLeft: '2.25rem' }}
                   placeholder="you@example.com"
                   required
                 />
@@ -85,12 +86,13 @@ export default function RegisterPage() {
                 Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type={showPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-10 pr-10"
+                  className="input-field"
+                  style={{ paddingLeft: '2.25rem', paddingRight: '2.5rem' }}
                   placeholder="Min. 8 characters"
                   required
                 />
@@ -99,6 +101,7 @@ export default function RegisterPage() {
                   onClick={() => setShowPass(!showPass)}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                   style={{ color: 'var(--text-muted)' }}
+                  aria-label={showPass ? 'Hide password' : 'Show password'}
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -110,12 +113,13 @@ export default function RegisterPage() {
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
                   type="password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  className="input-field pl-10"
+                  className="input-field"
+                  style={{ paddingLeft: '2.25rem' }}
                   placeholder="Repeat your password"
                   required
                 />
